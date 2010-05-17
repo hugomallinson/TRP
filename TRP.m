@@ -4,6 +4,7 @@ BeginPackage["TRP`"]
 
 Symbol_Key;
 Symbol_Both;
+Symbol_Units;
 
 TRPArrayPlot::usage = 
 "TRPArrayPlot[ matrix, <options>]
@@ -98,7 +99,7 @@ Join[point2[[{1,2}]],{#+top/m}]]}&/@(Range[0,m-1] top/m)],Lighting->"Neutral",Bo
 OldTRPTicks[maxes_List, dims_List,steps_] := 
 Function[{m, d}, Join[{##, Round[## steps/10]} & /@ Range[0, m, 10], {{m, ToString[d] <> "cm"}}]] @@@ Transpose[Join[{maxes}, {dims}]];
 
-TRPTicks[maxes_List, dims_List, intervals_ : 10, OptionsPattern[{Units -> "cm"}]] := 
+TRPTicks[maxes_List, dims_List, intervals_Real : 10, OptionsPattern[{Units -> "cm"}]] := 
  Module[{steps, ticks, newDims}, steps = maxes/dims;
   ticks = 
    Join[{Range[0, maxes[[1]], intervals steps[[1]]]}, {Range[0, maxes[[2]], 
@@ -127,11 +128,15 @@ Symmetry[mat_List] := Module[{height,width,center,oddOffset,offset},{height,widt
 		If[odd,Line[{{center+1,0},{center+1,height}}],{}]}]],
 		oddOffset=If[odd,1,0];
 		offset=If[center<width/2,center,width-center-oddOffset];
-		N[Correlation[Flatten[mat[[All,Range[center-offset+1,center]]]],
-Flatten[Reverse[mat[[All,Range[center+1+oddOffset,center+offset+oddOffset]]],2]]]]},
+		m1=Flatten[mat[[All,Range[center-offset+1,center]]]];
+		m2=Flatten[Reverse[mat[[All,Range[center+1+oddOffset,center+offset+oddOffset]]],2]];
+N[Correlation[m1,m2]],N[Sqrt[Mean[(m1-m2)^2]]]},
 		{{center,IntegerPart[width/2],"Center"},1,width-1-If[odd,1,0],1},{{odd,False,"Odd"},{False,True}}]]
 End[];
 EndPackage[];
+
+
+
 
 
 
